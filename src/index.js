@@ -46,6 +46,7 @@ function startManager(args = process.argv) {
     process.openStdin().on("keypress", (chunk, key) => {
         if (key && key.name === "c" && key.ctrl) {
             process.exit(userName);
+            console.info(`\nThank you for using File Manager, ${name}!\n`);
         }
     });
 }

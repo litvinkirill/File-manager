@@ -2,9 +2,19 @@ import fs from "fs/promises";
 import path from 'path';
 import * as constants from "constants";
 
+export function correctPathToFile(currentPath, pathToFile) {
+    let pathToCreateFile;
+    (pathToFile.startsWith('C:\\') || pathToFile.startsWith('\\') || pathToFile.startsWith('D:\\')) ?
+        pathToCreateFile = pathToFile :
+        pathToCreateFile = path.join(currentPath, pathToFile);
+
+    return pathToCreateFile;
+}
+
 export const cat = async (currentPath, pathToFile) => {
+    let pathToCat = correctPathToFile(currentPath, pathToFile);
     try {
-        const data = await fs.readFile(path.join(currentPath, pathToFile), "utf8");
+        const data = await fs.readFile(pathToCat, "utf8");
         console.log(`Content of the file:\n${data}`);
     } catch (error) {
         console.log('Operation failed');
@@ -12,8 +22,9 @@ export const cat = async (currentPath, pathToFile) => {
 }
 
 export const add = async (currentPath, fileName) => {
+    let pathToAdd = correctPathToFile(currentPath, fileName);
     try {
-        await fs.writeFile(path.join(currentPath, fileName), '', { flag: 'wx' });
+        await fs.writeFile(pathToAdd, '', { flag: 'wx' });
         console.log(`${fileName} is created`);
     } catch (error) {
         console.log('Operation failed');
@@ -22,7 +33,6 @@ export const add = async (currentPath, fileName) => {
 
 export const rename = async (currentPath, fileName, newfilename) => {
     const pathToFolder = path.join(currentPath, fileName).split('\\');
-
     pathToFolder.splice(-1, 1);
     try {
         await fs.rename(
@@ -40,7 +50,6 @@ export const cp = async (currentPath, pathToFile, pathToNewDir) => {
     let finallyPath;
     const pathToFolder = path.join(currentPath, pathToFile).split('\\');
     const filename = pathToFolder.slice(-1);
-
     if (pathToFile.startsWith('C:\\') || pathToFile.startsWith('\\') || pathToFile.startsWith('D:\\')) {
         testPath = path.join(pathToFile);
         finallyPath = path.join(pathToNewDir, filename[0]);
@@ -62,7 +71,6 @@ export const cp = async (currentPath, pathToFile, pathToNewDir) => {
 
 export const remove = async (currentPath, pathToFile) => {
     let pathToRmFile;
-    
     (pathToFile.startsWith('C:\\') || pathToFile.startsWith('\\') || pathToFile.startsWith('D:\\')) ?
         pathToRmFile = pathToFile :
         pathToRmFile = path.join(currentPath, pathToFile);
